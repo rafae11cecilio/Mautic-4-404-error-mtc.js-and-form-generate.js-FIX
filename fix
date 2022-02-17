@@ -1,0 +1,37 @@
+
+#Fixing error 404 mtc.js and form.js and event with error 500
+
+#Include this location settings in your domain.conf
+
+
+# Mautic tracking fallback
+location = /mtracking.gif {
+     expires off;
+     gzip off;
+     default_type "image/gif";
+     add_header 'Access-Control-Allow-Origin' *;
+     try_files $uri $uri/ /index.php$is_args$args;
+}
+
+# Mautic tracking code
+location = /mtc.js {
+    expires off;
+    default_type "application/javascript";
+    try_files $uri $uri/ /index.php$is_args$args;
+}
+
+# Embedded forms
+location = /form/generate.js {
+    expires off;
+    default_type "application/javascript";
+    try_files $uri $uri/ /index.php$is_args$args;
+}
+
+#restart the nginx service
+#Then reset permissions.
+
+find . -type f -not -perm 644 -exec chmod 644 {} +
+find . -type d -not -perm 755 -exec chmod 755 {} +
+chmod -R g+w var/cache/ var/logs/ app/config/
+chmod -R g+w media/files/ media/images/ translations/
+rm -rf var/cache/*
